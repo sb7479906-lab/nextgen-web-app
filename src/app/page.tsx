@@ -27,12 +27,11 @@ import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export default function ZeeSGlobalHub() {
-  // Navigation View Tab State: 'home' | 'departments' | 'checkout' | 'admin' | 'conference' | 'structure' | 'help'
   const [currentTab, setCurrentTab] = useState<string>("home");
   const [selectedDept, setSelectedDept] = useState<string>("all");
   const [cartCount, setCartCount] = useState<number>(0);
 
-  // COD Order Form States
+  // Form States
   const [fullName, setFullName] = useState("");
   const [countryCode, setCountryCode] = useState("+92");
   const [phone, setPhone] = useState("");
@@ -98,7 +97,7 @@ export default function ZeeSGlobalHub() {
     setPhone("");
     setAddress("");
     setIsSubmitting(false);
-    setCurrentTab("admin"); // Order dene ke baad direct Admin tracker view par slide ho jaye
+    setCurrentTab("admin");
   };
 
   const handleSendMessage = (e: React.FormEvent) => {
@@ -109,7 +108,7 @@ export default function ZeeSGlobalHub() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
+    <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-purple-500 selection:text-white relative overflow-hidden">
       
       {/* HEADER & TOP TAB NAVIGATION */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-slate-900/90 border-b border-slate-800">
@@ -187,181 +186,186 @@ export default function ZeeSGlobalHub() {
         </div>
       </header>
 
-      {/* TOP BAR WITH SLIDING BACK BUTTON (JAB AP HAR SEPARATE TAB MEIN HONGEY) */}
+      {/* FIXED BACK BUTTON BAR FOR ALL SUB-TABS */}
       {currentTab !== "home" && (
-        <div className="bg-purple-950/60 border-b border-purple-800/50 py-3 px-4 sm:px-8 flex items-center justify-between">
+        <div className="sticky top-20 z-40 bg-purple-950/80 backdrop-blur-md border-b border-purple-800/50 py-3 px-4 sm:px-8 flex items-center justify-between">
           <button 
             onClick={() => setCurrentTab("home")}
-            className="inline-flex items-center gap-2 text-xs font-bold text-purple-300 bg-purple-900/50 hover:bg-purple-800 px-4 py-2 rounded-xl border border-purple-700/50 transition-all"
+            className="inline-flex items-center gap-2 text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 px-4 py-2 rounded-xl shadow-lg transition-all"
           >
             <ArrowLeft className="w-4 h-4" /> Back to Main Home Hub
           </button>
           <span className="text-xs font-semibold text-purple-200 capitalize">
-            Current Tab: <span className="text-white font-bold">{currentTab}</span>
+            Tab Active: <span className="text-white font-bold uppercase tracking-wider">{currentTab}</span>
           </span>
         </div>
       )}
 
-      {/* MAIN CONTAINER WITH SLIDING TAB ANIMATION WRAPPER */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 transition-all duration-500">
+      {/* HORIZONTAL SLIDING VIEW CAROUSEL */}
+      <div 
+        className="flex w-[700vw] transition-transform duration-700 ease-in-out min-h-[calc(100vh-80px)]"
+        style={{
+          transform: 
+            currentTab === "home" ? "translateX(0vw)" :
+            currentTab === "departments" ? "translateX(-100vw)" :
+            currentTab === "checkout" ? "translateX(-200vw)" :
+            currentTab === "admin" ? "translateX(-300vw)" :
+            currentTab === "conference" ? "translateX(-400vw)" :
+            currentTab === "structure" ? "translateX(-500vw)" :
+            "translateX(-600vw)"
+        }}
+      >
 
-        {/* TAB 1: HOME HUB VIEW */}
-        {currentTab === "home" && (
-          <div className="space-y-16 animate-fadeIn">
-            {/* HERO BANNER */}
-            <section className="relative py-16 rounded-3xl bg-slate-900/60 border border-slate-800 text-center overflow-hidden p-6 sm:p-12">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-slate-950 to-slate-950"></div>
-              <div className="relative z-10 max-w-3xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold mb-6">
-                  <Sparkles className="w-4 h-4" /> B2B & B2C Integrated Ecosystem
-                </div>
-                <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 tracking-tight">
-                  Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400">ZeeS Group Global</span>
-                </h2>
-                <p className="text-slate-400 text-sm sm:text-base mb-8 leading-relaxed">
-                  Select a department or module tab below to explore products, order via Cash on Delivery, or enter the executive conference room.
-                </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <button 
-                    onClick={() => setCurrentTab("departments")}
-                    className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-purple-600/30 flex items-center gap-2"
-                  >
-                    <LayoutGrid className="w-4 h-4" /> Open Departments Tab
-                  </button>
-                  <button 
-                    onClick={() => setCurrentTab("checkout")}
-                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2"
-                  >
-                    <Truck className="w-4 h-4 text-purple-400" /> Quick COD Order Tab
-                  </button>
-                </div>
+        {/* VIEW 1: HOME HUB */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-7xl mx-auto space-y-12">
+          <div className="relative py-16 rounded-3xl bg-slate-900/60 border border-slate-800 text-center overflow-hidden p-6 sm:p-12">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-slate-950 to-slate-950"></div>
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-semibold mb-6">
+                <Sparkles className="w-4 h-4" /> B2B & B2C Integrated Ecosystem
               </div>
-            </section>
-
-            {/* STRATEGIC ADVANTAGES GRID */}
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
-                <TrendingUp className="w-8 h-8 text-purple-400 mb-4" />
-                <h4 className="font-bold text-white text-base mb-1">Low Budget High Profit</h4>
-                <p className="text-xs text-slate-400">Direct sourcing structure maximizing retail profit margins.</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
-                <Globe className="w-8 h-8 text-indigo-400 mb-4" />
-                <h4 className="font-bold text-white text-base mb-1">Global Supply Chain</h4>
-                <p className="text-xs text-slate-400">International logistics and warehouse distribution system.</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
-                <Award className="w-8 h-8 text-pink-400 mb-4" />
-                <h4 className="font-bold text-white text-base mb-1">Quality Compliance</h4>
-                <p className="text-xs text-slate-400">Strict quality assurance testing across all department products.</p>
-              </div>
-              <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
-                <ShieldCheck className="w-8 h-8 text-emerald-400 mb-4" />
-                <h4 className="font-bold text-white text-base mb-1">Scalability</h4>
-                <p className="text-xs text-slate-400">Enterprise technology infrastructure built for seamless growth.</p>
-              </div>
-            </section>
-
-            {/* QUICK FEATURE CARD LINKS */}
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div 
-                onClick={() => setCurrentTab("departments")}
-                className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="font-bold text-white text-base">4 Core Departments</h4>
-                  <p className="text-xs text-slate-400">Toys, Cosmetics, Jewelry, Fashion</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
-              </div>
-
-              <div 
-                onClick={() => setCurrentTab("conference")}
-                className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="font-bold text-white text-base">Virtual Conference</h4>
-                  <p className="text-xs text-slate-400">Live Team & Supplier Room</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
-              </div>
-
-              <div 
-                onClick={() => setCurrentTab("admin")}
-                className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
-              >
-                <div>
-                  <h4 className="font-bold text-white text-base">Admin Dashboard</h4>
-                  <p className="text-xs text-slate-400">Track COD Orders in Realtime</p>
-                </div>
-                <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </section>
-          </div>
-        )}
-
-        {/* TAB 2: DEPARTMENTS TAB VIEW */}
-        {currentTab === "departments" && (
-          <div className="space-y-8 animate-fadeIn">
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-6">
-              <div>
-                <h3 className="text-2xl font-black text-white">Core Business Departments</h3>
-                <p className="text-xs text-slate-400">Select a category tab to view products</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setSelectedDept("all")}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold ${selectedDept === "all" ? "bg-purple-600 text-white" : "bg-slate-900 text-slate-400 border border-slate-800"}`}
+              <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 tracking-tight">
+                Welcome to <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400">ZeeS Group Global</span>
+              </h2>
+              <p className="text-slate-400 text-sm sm:text-base mb-8 leading-relaxed">
+                Click any tab or card below to slide horizontally to the corresponding department, COD checkout, or admin portal.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <button 
+                  onClick={() => setCurrentTab("departments")}
+                  className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-lg shadow-purple-600/30 flex items-center gap-2"
                 >
-                  🌐 All
+                  <LayoutGrid className="w-4 h-4" /> Slide to Departments
                 </button>
-                {departments.map((d) => (
-                  <button
-                    key={d.id}
-                    onClick={() => setSelectedDept(d.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 ${selectedDept === d.id ? "bg-purple-600 text-white" : "bg-slate-900 text-slate-400 border border-slate-800"}`}
-                  >
-                    <span>{d.icon}</span> {d.name}
-                  </button>
-                ))}
+                <button 
+                  onClick={() => setCurrentTab("checkout")}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2"
+                >
+                  <Truck className="w-4 h-4 text-purple-400" /> Slide to COD Order
+                </button>
               </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {sampleProducts
-                .filter(p => selectedDept === "all" || p.dept === selectedDept)
-                .map((product) => (
-                  <div key={product.id} className="bg-slate-900 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between hover:border-purple-500/50 transition-all">
-                    <div>
-                      <div className="w-full h-40 bg-slate-950 rounded-xl flex items-center justify-center text-5xl mb-4 border border-slate-800/50">
-                        {product.icon}
-                      </div>
-                      <span className="text-[10px] uppercase tracking-wider text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-md">
-                        {product.dept}
-                      </span>
-                      <h4 className="font-bold text-white text-lg mt-2 mb-1">{product.name}</h4>
-                      <p className="text-purple-300 font-extrabold text-xl mb-4">{product.price}</p>
-                    </div>
-                    <button 
-                      onClick={() => { addToCart(); setCurrentTab("checkout"); }}
-                      className="w-full py-2.5 bg-slate-800 hover:bg-purple-600 text-white rounded-xl font-semibold text-xs transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ShoppingBag className="w-4 h-4" /> Order via COD Tab
-                    </button>
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
+              <TrendingUp className="w-8 h-8 text-purple-400 mb-4" />
+              <h4 className="font-bold text-white text-base mb-1">Low Budget High Profit</h4>
+              <p className="text-xs text-slate-400">Direct sourcing structure maximizing retail profit margins.</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
+              <Globe className="w-8 h-8 text-indigo-400 mb-4" />
+              <h4 className="font-bold text-white text-base mb-1">Global Supply Chain</h4>
+              <p className="text-xs text-slate-400">International logistics and warehouse distribution system.</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
+              <Award className="w-8 h-8 text-pink-400 mb-4" />
+              <h4 className="font-bold text-white text-base mb-1">Quality Compliance</h4>
+              <p className="text-xs text-slate-400">Strict quality assurance testing across all department products.</p>
+            </div>
+            <div className="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 hover:border-purple-500/40 transition-all">
+              <ShieldCheck className="w-8 h-8 text-emerald-400 mb-4" />
+              <h4 className="font-bold text-white text-base mb-1">Scalability</h4>
+              <p className="text-xs text-slate-400">Enterprise technology infrastructure built for seamless growth.</p>
             </div>
           </div>
-        )}
 
-        {/* TAB 3: COD CHECKOUT TAB VIEW */}
-        {currentTab === "checkout" && (
-          <div className="max-w-xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl animate-fadeIn">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div 
+              onClick={() => setCurrentTab("departments")}
+              className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
+            >
+              <div>
+                <h4 className="font-bold text-white text-base">4 Core Departments</h4>
+                <p className="text-xs text-slate-400">Toys, Cosmetics, Jewelry, Fashion</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
+            </div>
+
+            <div 
+              onClick={() => setCurrentTab("conference")}
+              className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
+            >
+              <div>
+                <h4 className="font-bold text-white text-base">Virtual Conference</h4>
+                <p className="text-xs text-slate-400">Live Team & Supplier Room</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
+            </div>
+
+            <div 
+              onClick={() => setCurrentTab("admin")}
+              className="bg-slate-900 border border-slate-800 hover:border-purple-500 p-6 rounded-2xl cursor-pointer transition-all group flex items-center justify-between"
+            >
+              <div>
+                <h4 className="font-bold text-white text-base">Admin Dashboard</h4>
+                <p className="text-xs text-slate-400">Track COD Orders in Realtime</p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-purple-400 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+        </section>
+
+        {/* VIEW 2: DEPARTMENTS */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-7xl mx-auto space-y-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-6">
+            <div>
+              <h3 className="text-2xl font-black text-white">Core Business Departments View</h3>
+              <p className="text-xs text-slate-400">Select a category tab to filter products</p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setSelectedDept("all")}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold ${selectedDept === "all" ? "bg-purple-600 text-white" : "bg-slate-900 text-slate-400 border border-slate-800"}`}
+              >
+                🌐 All
+              </button>
+              {departments.map((d) => (
+                <button
+                  key={d.id}
+                  onClick={() => setSelectedDept(d.id)}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 ${selectedDept === d.id ? "bg-purple-600 text-white" : "bg-slate-900 text-slate-400 border border-slate-800"}`}
+                >
+                  <span>{d.icon}</span> {d.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {sampleProducts
+              .filter(p => selectedDept === "all" || p.dept === selectedDept)
+              .map((product) => (
+                <div key={product.id} className="bg-slate-900 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between hover:border-purple-500/50 transition-all">
+                  <div>
+                    <div className="w-full h-40 bg-slate-950 rounded-xl flex items-center justify-center text-5xl mb-4 border border-slate-800/50">
+                      {product.icon}
+                    </div>
+                    <span className="text-[10px] uppercase tracking-wider text-purple-400 font-semibold bg-purple-500/10 px-2.5 py-1 rounded-md">
+                      {product.dept}
+                    </span>
+                    <h4 className="font-bold text-white text-lg mt-2 mb-1">{product.name}</h4>
+                    <p className="text-purple-300 font-extrabold text-xl mb-4">{product.price}</p>
+                  </div>
+                  <button 
+                    onClick={() => { addToCart(); setCurrentTab("checkout"); }}
+                    className="w-full py-2.5 bg-slate-800 hover:bg-purple-600 text-white rounded-xl font-semibold text-xs transition-colors flex items-center justify-center gap-2"
+                  >
+                    <ShoppingBag className="w-4 h-4" /> Slide to COD Order View
+                  </button>
+                </div>
+              ))}
+          </div>
+        </section>
+
+        {/* VIEW 3: COD CHECKOUT */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-xl mx-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
             <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
-              <Truck className="text-purple-400" /> Cash On Delivery Checkout Tab
+              <Truck className="text-purple-400" /> Cash On Delivery Checkout View
             </h3>
-            <p className="text-xs text-slate-400 mb-6">Enter delivery contact and pinpoint location below.</p>
+            <p className="text-xs text-slate-400 mb-6">Enter delivery details and pinpoint coordinates below.</p>
 
             <form className="space-y-4" onSubmit={handleOrderSubmit}>
               <div>
@@ -389,7 +393,6 @@ export default function ZeeSGlobalHub() {
                 <textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="House No, Street, Area, City" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" required></textarea>
               </div>
 
-              {/* Google Maps Location Sync */}
               <div className="bg-slate-950 border border-slate-800 rounded-2xl p-3">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-semibold text-purple-300 flex items-center gap-1.5">
@@ -415,19 +418,19 @@ export default function ZeeSGlobalHub() {
                 disabled={isSubmitting}
                 className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-600/30"
               >
-                {isSubmitting ? "Processing Order..." : "Confirm Cash On Delivery Order"}
+                {isSubmitting ? "Processing Order..." : "Confirm COD & Slide to Admin Tracker"}
               </button>
             </form>
           </div>
-        )}
+        </section>
 
-        {/* TAB 4: ADMIN DASHBOARD TAB VIEW */}
-        {currentTab === "admin" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl animate-fadeIn space-y-6">
+        {/* VIEW 4: ADMIN DASHBOARD */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-7xl mx-auto space-y-6">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
             <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div>
                 <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Package className="text-purple-400" /> Live Admin Order Tracker
+                  <Package className="text-purple-400" /> Live Admin Order Tracker View
                 </h3>
                 <p className="text-xs text-slate-400">Manage incoming Cash on Delivery orders</p>
               </div>
@@ -467,80 +470,78 @@ export default function ZeeSGlobalHub() {
               </table>
             </div>
           </div>
-        )}
+        </section>
 
-        {/* TAB 5: VIRTUAL CONFERENCE ROOM TAB VIEW */}
-        {currentTab === "conference" && (
-          <div className="space-y-6 animate-fadeIn">
-            <div className="border-b border-slate-800 pb-4">
-              <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                <Video className="text-purple-400" /> Executive Conference Room
-              </h3>
-              <p className="text-xs text-slate-400">Encrypted real-time communication portal</p>
+        {/* VIEW 5: CONFERENCE ROOM */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-7xl mx-auto space-y-6">
+          <div className="border-b border-slate-800 pb-4">
+            <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+              <Video className="text-purple-400" /> Executive Conference Room View
+            </h3>
+            <p className="text-xs text-slate-400">Encrypted real-time communication portal</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between h-96 relative overflow-hidden">
+              <div className="relative z-10 flex justify-between items-center">
+                <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5">
+                  <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Stream Active
+                </span>
+                <span className="text-xs text-slate-400">ZeeS Global Room #1</span>
+              </div>
+
+              <div className="relative z-10 text-center py-8">
+                <div className="w-20 h-20 bg-purple-600/30 rounded-full flex items-center justify-center mx-auto mb-3 border border-purple-500/40">
+                  <Users className="w-10 h-10 text-purple-300" />
+                </div>
+                <h4 className="font-bold text-white text-base">Executive Strategy Call</h4>
+                <p className="text-xs text-slate-400">4 Active Members Online</p>
+              </div>
+
+              <div className="relative z-10 flex justify-center gap-4">
+                <button className="p-3 bg-slate-800 text-white rounded-full border border-slate-700">
+                  <Mic className="w-5 h-5 text-purple-400" />
+                </button>
+                <button className="p-3 bg-purple-600 text-white rounded-full shadow-lg">
+                  <Video className="w-5 h-5" />
+                </button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col justify-between h-96 relative overflow-hidden">
-                <div className="relative z-10 flex justify-between items-center">
-                  <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5">
-                    <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span> Stream Active
-                  </span>
-                  <span className="text-xs text-slate-400">ZeeS Global Room #1</span>
-                </div>
+            <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col justify-between h-96">
+              <h4 className="font-bold text-white text-xs mb-3 flex items-center gap-2 border-b border-slate-800 pb-2">
+                <MessageSquare className="w-4 h-4 text-purple-400" /> Executive Live Chat
+              </h4>
 
-                <div className="relative z-10 text-center py-8">
-                  <div className="w-20 h-20 bg-purple-600/30 rounded-full flex items-center justify-center mx-auto mb-3 border border-purple-500/40">
-                    <Users className="w-10 h-10 text-purple-300" />
+              <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-1">
+                {chatMessages.map((msg, idx) => (
+                  <div key={idx} className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
+                    <p className="text-[10px] text-purple-400 font-bold">{msg.sender}</p>
+                    <p className="text-xs text-slate-200 mt-0.5">{msg.text}</p>
                   </div>
-                  <h4 className="font-bold text-white text-base">Executive Strategy Call</h4>
-                  <p className="text-xs text-slate-400">4 Active Members Online</p>
-                </div>
-
-                <div className="relative z-10 flex justify-center gap-4">
-                  <button className="p-3 bg-slate-800 text-white rounded-full border border-slate-700">
-                    <Mic className="w-5 h-5 text-purple-400" />
-                  </button>
-                  <button className="p-3 bg-purple-600 text-white rounded-full shadow-lg">
-                    <Video className="w-5 h-5" />
-                  </button>
-                </div>
+                ))}
               </div>
 
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 flex flex-col justify-between h-96">
-                <h4 className="font-bold text-white text-xs mb-3 flex items-center gap-2 border-b border-slate-800 pb-2">
-                  <MessageSquare className="w-4 h-4 text-purple-400" /> Executive Live Chat
-                </h4>
-
-                <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-1">
-                  {chatMessages.map((msg, idx) => (
-                    <div key={idx} className="bg-slate-950 p-3 rounded-xl border border-slate-800/80">
-                      <p className="text-[10px] text-purple-400 font-bold">{msg.sender}</p>
-                      <p className="text-xs text-slate-200 mt-0.5">{msg.text}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <form onSubmit={handleSendMessage} className="flex gap-2">
-                  <input 
-                    type="text" 
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    placeholder="Type message..." 
-                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
-                  />
-                  <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-4 py-2 rounded-xl font-bold">
-                    Send
-                  </button>
-                </form>
-              </div>
+              <form onSubmit={handleSendMessage} className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type message..." 
+                  className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
+                />
+                <button type="submit" className="bg-purple-600 hover:bg-purple-500 text-white text-xs px-4 py-2 rounded-xl font-bold">
+                  Send
+                </button>
+              </form>
             </div>
           </div>
-        )}
+        </section>
 
-        {/* TAB 6: BUSINESS CHAIN TAB VIEW */}
-        {currentTab === "structure" && (
-          <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-6 animate-fadeIn">
-            <h3 className="text-2xl font-bold text-white">ZeeS Business Chain Architecture</h3>
+        {/* VIEW 6: BUSINESS CHAIN */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-5xl mx-auto space-y-6">
+          <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 text-center space-y-6">
+            <h3 className="text-2xl font-bold text-white">ZeeS Business Chain View</h3>
             <p className="text-xs text-slate-400">Visual representation of direct supply chain operations</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center max-w-3xl mx-auto">
@@ -561,16 +562,16 @@ export default function ZeeSGlobalHub() {
               onClick={() => alert("Downloading Chain Diagram...")}
               className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-2.5 rounded-xl text-xs font-semibold border border-slate-700"
             >
-              <Download className="w-4 h-4" /> Save Diagram to Device
+              <Download className="w-4 h-4" /> Save Diagram
             </button>
           </div>
-        )}
+        </section>
 
-        {/* TAB 7: HELP TAB VIEW */}
-        {currentTab === "help" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-4 animate-fadeIn max-w-2xl mx-auto">
+        {/* VIEW 7: HELP */}
+        <section className="w-[100vw] p-6 sm:p-10 max-w-2xl mx-auto">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8 space-y-4">
             <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <HelpCircle className="text-purple-400" /> ZeeS Support & Help Center
+              <HelpCircle className="text-purple-400" /> ZeeS Support Center View
             </h3>
             <p className="text-xs text-slate-400">Questions about orders, shipping, or suppliers?</p>
             <div className="space-y-3 pt-4 text-xs text-slate-300">
@@ -578,12 +579,12 @@ export default function ZeeSGlobalHub() {
               <p className="p-3 bg-slate-950 rounded-xl border border-slate-800">💬 <strong className="text-white">Conference Support:</strong> Executives can join live chat directly via the Conference Tab.</p>
             </div>
           </div>
-        )}
+        </section>
 
-      </main>
+      </div>
 
       {/* FOOTER */}
-      <footer className="bg-slate-950 border-t border-slate-800 py-6 text-center text-slate-500 text-xs">
+      <footer className="bg-slate-950 border-t border-slate-800 py-6 text-center text-slate-500 text-xs relative z-10">
         <p>© 2026 ZeeS Group Global. All Rights Reserved.</p>
       </footer>
     </div>
