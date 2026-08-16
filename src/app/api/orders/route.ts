@@ -34,10 +34,11 @@ export async function POST(req: Request) {
       orderId: orderDoc.id,
       message: "Order placed successfully!",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating order:", error);
+    const errorMessage = error instanceof Error ? error.message : "Server Error";
     return NextResponse.json(
-      { success: false, message: error.message || "Server Error" },
+      { success: false, message: errorMessage },
       { status: 500 }
     );
   }
