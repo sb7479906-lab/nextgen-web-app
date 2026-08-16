@@ -9,19 +9,28 @@ import {
   Award, 
   Sparkles, 
   MapPin, 
-  Phone, 
-  UserCheck, 
   Truck,
-  MessageSquare,
   HelpCircle,
-  Building2,
-  Lock
+  Lock,
+  Download,
+  Users,
+  Video,
+  Mic,
+  MessageSquare,
+  CheckCircle2
 } from "lucide-react";
 
 export default function ZeeSGlobalHub() {
   const [activeDepartment, setActiveDepartment] = useState("all");
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+
+  // COD Order Form States
+  const [fullName, setFullName] = useState("");
+  const [countryCode, setCountryCode] = useState("+92");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Departments List
   const departments = [
@@ -31,7 +40,7 @@ export default function ZeeSGlobalHub() {
     { id: "fashion", name: "Fashion Dept", icon: "👗", desc: "Modern & Traditional Apparel" },
   ];
 
-  // Dummy Sample Products
+  // Sample Products Catalog
   const sampleProducts = [
     { id: 1, name: "RC High-Speed Stunt Car", dept: "toys", price: "PKR 3,499", icon: "🏎️" },
     { id: 2, name: "Hydrating Face Serum", dept: "cosmetics", price: "PKR 2,199", icon: "✨" },
@@ -41,6 +50,29 @@ export default function ZeeSGlobalHub() {
 
   const addToCart = () => {
     setCartCount(prev => prev + 1);
+  };
+
+  // COD Form Backend API Handler
+  const handleOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Backend Simulation & Validation
+      await new Promise(resolve => setTimeout(resolve, 1200));
+
+      alert(`🎉 Order Confirmed!\n\nCustomer: ${fullName}\nPhone: ${countryCode}${phone}\nDelivery Address: ${address}\nPayment: Cash on Delivery`);
+      
+      setShowCheckoutModal(false);
+      setCartCount(0);
+      setFullName("");
+      setPhone("");
+      setAddress("");
+    } catch (err) {
+      alert("Order submit nahi ho saka. Dobara koshish karein.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -63,11 +95,11 @@ export default function ZeeSGlobalHub() {
 
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
             <a href="#welcome" className="hover:text-purple-400 transition-colors">Home</a>
-            <a href="#advantages" className="hover:text-purple-400 transition-colors">Strategic Advantages</a>
+            <a href="#advantages" className="hover:text-purple-400 transition-colors">Advantages</a>
             <a href="#departments" className="hover:text-purple-400 transition-colors">Departments</a>
             <a href="#structure" className="hover:text-purple-400 transition-colors">Chain Structure</a>
-            <a href="#help" className="hover:text-purple-400 transition-colors flex items-center gap-1">
-              <HelpCircle className="w-4 h-4 text-purple-400" /> Help
+            <a href="#conference" className="hover:text-purple-400 transition-colors flex items-center gap-1">
+              <Video className="w-4 h-4 text-purple-400" /> Conference
             </a>
           </nav>
 
@@ -90,7 +122,7 @@ export default function ZeeSGlobalHub() {
         </div>
       </header>
 
-      {/* ==================== 2. WELCOME & HERO SECTION ==================== */}
+      {/* ==================== 2. WELCOME HERO SECTION ==================== */}
       <section id="welcome" className="relative py-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-slate-950 to-slate-950"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
@@ -105,7 +137,7 @@ export default function ZeeSGlobalHub() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <a href="#departments" className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-purple-600/30">
-              Explore Departments
+              Explore 4 Departments
             </a>
             <button 
               onClick={() => setShowCheckoutModal(true)}
@@ -161,7 +193,7 @@ export default function ZeeSGlobalHub() {
         </div>
       </section>
 
-      {/* ==================== 4. DEPARTMENTS SECTION ==================== */}
+      {/* ==================== 4. 4 CORE BUSINESS DEPARTMENTS ==================== */}
       <section id="departments" className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
@@ -224,7 +256,40 @@ export default function ZeeSGlobalHub() {
         </div>
       </section>
 
-      {/* ==================== 5. COD CHECKOUT MODAL ==================== */}
+      {/* ==================== 5. BUSINESS CHAIN STRUCTURE ==================== */}
+      <section id="structure" className="py-16 bg-slate-900/30 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">Our Business Chain Structure</h3>
+            <p className="text-slate-400 text-sm">Visual operational diagram of ZeeS Group Global</p>
+          </div>
+
+          <div className="p-8 rounded-3xl bg-slate-900 border border-slate-800 relative text-center">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+              <div className="p-4 rounded-xl bg-purple-950/40 border border-purple-800/50">
+                <Users className="w-8 h-8 text-purple-400 mx-auto mb-2" />
+                <h5 className="font-bold text-white">Global Suppliers</h5>
+                <p className="text-xs text-slate-400">Direct Sourcing</p>
+              </div>
+              <div className="text-purple-400 font-bold hidden md:block">➔ ➔ ➔</div>
+              <div className="p-4 rounded-xl bg-purple-900/60 border border-purple-600/50">
+                <Globe className="w-8 h-8 text-purple-300 mx-auto mb-2" />
+                <h5 className="font-bold text-white">ZeeS Central Hub</h5>
+                <p className="text-xs text-slate-300">Quality Control & Inventory</p>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => alert("Downloading ZeeS Chain Structure Image...")}
+              className="mt-8 inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 px-6 py-2.5 rounded-xl text-xs font-semibold border border-slate-700"
+            >
+              <Download className="w-4 h-4" /> Save Diagram to Device
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ==================== 6. COD CHECKOUT MODAL ==================== */}
       {showCheckoutModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 relative shadow-2xl">
@@ -238,34 +303,64 @@ export default function ZeeSGlobalHub() {
             <h3 className="text-xl font-bold text-white mb-1 flex items-center gap-2">
               <Truck className="text-purple-400" /> Cash On Delivery Order
             </h3>
-            <p className="text-xs text-slate-400 mb-6">Enter your phone and shipping address below to confirm order.</p>
+            <p className="text-xs text-slate-400 mb-6">Enter your phone number and shipping address to confirm order.</p>
 
-            <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); alert("Order Placed Successfully!"); setShowCheckoutModal(false); }}>
+            <form className="space-y-4" onSubmit={handleOrderSubmit}>
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-                <input type="text" placeholder="e.g. Muhammad Ali" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" required />
+                <input 
+                  type="text" 
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  placeholder="e.g. Muhammad Ali" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" 
+                  required 
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Mobile Number (With Country Code)</label>
                 <div className="flex gap-2">
-                  <input type="text" defaultValue="+92" className="w-20 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white text-center" />
-                  <input type="tel" placeholder="300 1234567" className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" required />
+                  <input 
+                    type="text" 
+                    value={countryCode} 
+                    onChange={(e) => setCountryCode(e.target.value)}
+                    className="w-20 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-white text-center" 
+                  />
+                  <input 
+                    type="tel" 
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="300 1234567" 
+                    className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" 
+                    required 
+                  />
                 </div>
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Delivery Address</label>
-                <textarea rows={3} placeholder="Complete Street Address, House No, City" className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" required></textarea>
+                <textarea 
+                  rows={3} 
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Complete Street Address, House No, City" 
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500" 
+                  required
+                ></textarea>
               </div>
 
               <div className="bg-purple-950/30 border border-purple-800/40 p-3 rounded-xl flex items-center gap-3">
                 <MapPin className="text-purple-400 w-5 h-5 flex-shrink-0" />
-                <p className="text-xs text-purple-200">Google Maps location sync enabled for precision delivery.</p>
+                <p className="text-xs text-purple-200">Google Maps location auto-sync enabled for precision delivery.</p>
               </div>
 
-              <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-600/30">
-                Confirm Cash On Delivery Order
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2"
+              >
+                {isSubmitting ? "Processing Order..." : "Confirm Cash On Delivery Order"}
               </button>
             </form>
           </div>
